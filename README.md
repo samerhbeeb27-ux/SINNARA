@@ -1,2 +1,2 @@
 # SINNARA
-A smart tool for reruitment
+A smart tool for reruitment.
