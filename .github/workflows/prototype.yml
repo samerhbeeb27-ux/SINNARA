@@ -1,7 +1,5 @@
 name: Prototype cloud checks
 on:
-  push:
-    branches: [phase-1-cloud-prototype]
   pull_request:
     branches: [main]
 permissions:
@@ -24,10 +22,6 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci
-      - name: Format source for review
-        run: |
-          npx --yes prettier@3.6.2 --write src tests scripts next.config.ts playwright.config.ts tsconfig.json package.json
-          node -e "const fs=require('node:fs');function emit(p){if(fs.statSync(p).isDirectory()){for(const n of fs.readdirSync(p))emit(p+'/'+n)}else console.log('FORMATTED_FILE_JSON='+JSON.stringify({path:p,content:fs.readFileSync(p,'utf8')}))}['src','tests','scripts','next.config.ts','playwright.config.ts','tsconfig.json','package.json'].forEach(emit)"
       - run: npm run typecheck
       - run: npm run build
       - name: Install cloud browser
