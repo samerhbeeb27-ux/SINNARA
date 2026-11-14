@@ -1,0 +1,38 @@
+name: Prototype cloud checks
+on:
+  push:
+    branches: [phase-1-cloud-prototype]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: prototype-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bootstrap lockfile if needed
+        run: |
+          if [ ! -f package-lock.json ]; then
+            npm install --package-lock-only --ignore-scripts
+            node -e "console.log('LOCKFILE_JSON='+JSON.stringify(JSON.parse(require('node:fs').readFileSync('package-lock.json','utf8'))))"
+          fi
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Install cloud browser
+        run: npx playwright install --with-deps chromium
+      - name: Browser, accessibility and payload checks
+        run: npm test
