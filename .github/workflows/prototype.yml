@@ -17,19 +17,17 @@ jobs:
       NEXT_TELEMETRY_DISABLED: '1'
       CI: 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '22'
-      - name: Bootstrap lockfile if needed
-        run: |
-          if [ ! -f package-lock.json ]; then
-            npm install --package-lock-only --ignore-scripts
-            node -e "console.log('LOCKFILE_JSON='+JSON.stringify(JSON.parse(require('node:fs').readFileSync('package-lock.json','utf8'))))"
-          fi
       - run: npm ci
+      - name: Format source for review
+        run: |
+          npx --yes prettier@3.6.2 --write src tests scripts next.config.ts playwright.config.ts tsconfig.json package.json
+          node -e "const fs=require('node:fs');function emit(p){if(fs.statSync(p).isDirectory()){for(const n of fs.readdirSync(p))emit(p+'/'+n)}else console.log('FORMATTED_FILE_JSON='+JSON.stringify({path:p,content:fs.readFileSync(p,'utf8')}))}['src','tests','scripts','next.config.ts','playwright.config.ts','tsconfig.json','package.json'].forEach(emit)"
       - run: npm run typecheck
       - run: npm run build
       - name: Install cloud browser

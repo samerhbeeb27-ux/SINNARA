@@ -41,11 +41,17 @@ export function JobExplorer({ locale }: { locale: Locale }) {
   setRoute(readRoute());
   try { const data: unknown = JSON.parse(localStorage.getItem(SAVE_KEY) || '[]'); if(Array.isArray(data)) setSaved(data.filter((id): id is string => typeof id === 'string' && jobs.some(j => j.id === id))); } catch { /* Storage is optional; browsing remains available. */ }
   const online = () => setOffline(!navigator.onLine);
-  const pop = () => { setRoute(readRoute()); setApplied(false); };
+  const pop = () => { setRoute(readRoute()); setApplied(false); mainRef.current?.focus(); };
   online(); setReady(true);
   window.addEventListener('online',online); window.addEventListener('offline',online); window.addEventListener('popstate',pop);
   return () => { window.removeEventListener('online',online); window.removeEventListener('offline',online); window.removeEventListener('popstate',pop); };
  }, []);
+
+ useEffect(() => {
+  if (!notice) return;
+  const timer = window.setTimeout(() => setNotice(''), 6000);
+  return () => window.clearTimeout(timer);
+ }, [notice]);
 
  const href = (patch: Partial<Route>) => '/' + locale + '/' + query({ ...route,...patch });
  const go = (patch: Partial<Route>, replace = false) => {

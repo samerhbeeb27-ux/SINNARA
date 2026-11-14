@@ -16,7 +16,7 @@ All source changes are made through GitHub. GitHub Actions builds and tests on s
 
 The static export is designed for Cloudflare Pages. The prototype branch disables Vercel Git deployments for itself, leaving other branches' configuration unchanged. Do not merge or change production hosting until the prototype has been reviewed.
 
-The first cloud run generates a lockfile, which must be committed before treating the branch as reproducible. Following runs use npm ci.
+The dependency lockfile was generated on a GitHub runner and is committed. Following runs use npm ci. GitHub actions are pinned to reviewed commit SHAs.
 
 ## Product and design choices
 

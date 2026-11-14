@@ -62,6 +62,8 @@ test('Arabic is RTL and handles alef variants', async ({page}) => {
  await page.goto('/ar/');
  await expect(page.locator('html')).toHaveAttribute('lang','ar');
  await expect(page.locator('html')).toHaveAttribute('dir','rtl');
+ await page.getByRole('searchbox').fill('ألمبيعات');
+ await expect(page.getByTestId('job-card')).toHaveCount(1);
  await page.getByRole('searchbox').fill('مساعد حسابات');
  await expect(page.getByTestId('job-card')).toHaveCount(1);
  await page.getByRole('link',{name:'English',exact:true}).click();
@@ -70,7 +72,7 @@ test('Arabic is RTL and handles alef variants', async ({page}) => {
 });
 test('error, loading, invalid vacancy and offline states', async ({page,context}) => {
  await page.goto('/en/?state=error');
- await expect(page.getByRole('alert')).toContainText('couldn’t load');
+ await expect(page.getByRole('alert').filter({hasText: 'We couldn’t load'})).toContainText('couldn’t load');
  await page.getByRole('button',{name:'Try again'}).click();
  await expect(page.getByTestId('job-card')).toHaveCount(5);
  await page.goto('/en/?state=loading');
