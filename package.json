@@ -6,10 +6,11 @@
     "node": ">=22 <23"
   },
   "scripts": {
-    "build": "next build",
+    "build": "npm run validate:inventory && next build",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "serve": "node scripts/serve.mjs"
+    "serve": "node scripts/serve.mjs",
+    "validate:inventory": "tsc --module commonjs --target es2022 --moduleResolution node --esModuleInterop --skipLibCheck --outDir .inventory-build scripts/validate-inventory.ts && node .inventory-build/scripts/validate-inventory.js"
   },
   "dependencies": {
     "next": "16.4.6",
